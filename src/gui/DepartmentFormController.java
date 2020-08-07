@@ -30,7 +30,7 @@ public class DepartmentFormController implements Initializable {
 	private DepartmentService service;
 
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
-	
+
 	@FXML
 	private TextField txtId;
 
@@ -57,7 +57,7 @@ public class DepartmentFormController implements Initializable {
 	public void subscribeDataChangeListener(DataChangeListener listener) {
 		dataChangeListeners.add(listener);
 	}
-	
+
 	@FXML
 	public void onBtSaveAction(ActionEvent event) {
 		if (entity == null) {
@@ -66,17 +66,15 @@ public class DepartmentFormController implements Initializable {
 		if (service == null) {
 			throw new IllegalStateException("Service was null");
 		}
-		
+
 		try {
 			entity = getFormData();
 			service.saveOrUpdate(entity);
 			notifyDataChangeListeners();
 			Utils.currentStage(event).close();
-		} 
-		catch (ValidationException e) {
+		} catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
-		}
-		catch (DbException e) {
+		} catch (DbException e) {
 			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
 		}
 
@@ -86,21 +84,21 @@ public class DepartmentFormController implements Initializable {
 		for (DataChangeListener listener : dataChangeListeners) {
 			listener.onDataChanged();
 		}
-		
+
 	}
 
 	private Department getFormData() {
 		Department obj = new Department();
-		
+
 		ValidationException exception = new ValidationException("Validation error");
-		
+
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
-		
+
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "Field can't be empty");
 		}
 		obj.setName(txtName.getText());
-		
+
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -132,10 +130,10 @@ public class DepartmentFormController implements Initializable {
 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
-		
+
 		if (fields.contains("name")) {
 			labelErrorName.setText(errors.get("name"));
 		}
 	}
-	
+
 }
